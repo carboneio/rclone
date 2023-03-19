@@ -508,7 +508,7 @@ func (c *Cipher) encryptFileName(in string) string {
 // EncryptFileName encrypts a file path
 func (c *Cipher) EncryptFileName(in string) string {
 	if c.mode == NameEncryptionOff {
-		return in + encryptedSuffix
+		return strings.Replace(in, "|", "-", 1) + encryptedSuffix
 	}
 	return c.encryptFileName(in)
 }
@@ -572,7 +572,7 @@ func (c *Cipher) DecryptFileName(in string) (string, error) {
 		if remainingLength == 0 || !strings.HasSuffix(in, encryptedSuffix) {
 			return "", ErrorNotAnEncryptedFile
 		}
-		decrypted := in[:remainingLength]
+		decrypted := strings.Replace(in[:remainingLength], "-", "|", 1)
 		if version.Match(decrypted) {
 			_, unversioned := version.Remove(decrypted)
 			if unversioned == "" {
