@@ -37,7 +37,7 @@ const (
 	blockHeaderSize     = secretbox.Overhead
 	blockDataSize       = 64 * 1024
 	blockSize           = blockHeaderSize + blockDataSize
-	encryptedSuffix     = ".bin" // when file name encryption is off we add this suffix to make sure the cloud provider doesn't process the file
+	encryptedSuffix     = "" // when file name encryption is off we add this suffix to make sure the cloud provider doesn't process the file
 )
 
 // Errors returned by cipher
@@ -508,7 +508,7 @@ func (c *Cipher) encryptFileName(in string) string {
 // EncryptFileName encrypts a file path
 func (c *Cipher) EncryptFileName(in string) string {
 	if c.mode == NameEncryptionOff {
-		return strings.Replace(in, "|", "-", 1) + encryptedSuffix
+		return strings.Replace(in, "|", "-", 1) /*+ encryptedSuffix*/
 	}
 	return c.encryptFileName(in)
 }
@@ -568,8 +568,8 @@ func (c *Cipher) decryptFileName(in string) (string, error) {
 // DecryptFileName decrypts a file path
 func (c *Cipher) DecryptFileName(in string) (string, error) {
 	if c.mode == NameEncryptionOff {
-		remainingLength := len(in) - len(encryptedSuffix)
-		if remainingLength == 0 || !strings.HasSuffix(in, encryptedSuffix) {
+		remainingLength := len(in) /*- len(encryptedSuffix)*/
+		if remainingLength == 0 /*|| !strings.HasSuffix(in, encryptedSuffix)*/ {
 			return "", ErrorNotAnEncryptedFile
 		}
 		decrypted := strings.Replace(in[:remainingLength], "-", "|", 1)
